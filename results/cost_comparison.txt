@@ -1,0 +1,29 @@
+﻿COST COMPARISON: PRUNED vs DENSE
+============================================================
+
+We measure cost as forward-pass FLOPs (multiply-accumulate
+operations) counting ONLY active (non-zero-mask) connections.
+This is NOT a dense-times-zero shortcut — our sparse_forward_flops
+function counts mask.sum() per layer, so a pruned connection
+genuinely contributes zero FLOPs to the count.
+
+However, our actual forward pass still uses dense matmul (NumPy
+does not have sparse BLAS). The FLOP count is a *theoretical*
+measure of work that a sparse-aware kernel WOULD save. In a
+production system (e.g. AQUA), you would use a sparse GEMM
+kernel or a compressed sparse row (CSR) representation to
+realise these savings on real hardware.
+
+Criterion     Target%  Achieved%  Acc Mean  Acc Std      FLOPs  FLOP Red
+---------------------------------------------------------------------------
+magnitude         0%       0.0%    0.9667   0.0091      34048      0.0%
+magnitude        50%      50.0%    0.9657   0.0092      17024     50.0%
+magnitude        75%      75.0%    0.9676   0.0105       8512     75.0%
+magnitude        90%      90.0%    0.9528   0.0045       3404     90.0%
+magnitude        95%      95.0%    0.9528   0.0000       1702     95.0%
+taylor            0%       0.0%    0.9667   0.0091      34048      0.0%
+taylor           50%      50.0%    0.9639   0.0104      17024     50.0%
+taylor           75%      75.0%    0.9667   0.0023       8512     75.0%
+taylor           90%      90.0%    0.9630   0.0047       3404     90.0%
+taylor           95%      95.0%    0.9444   0.0099       1702     95.0%
+

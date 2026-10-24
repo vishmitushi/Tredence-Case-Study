@@ -1,0 +1,13 @@
+FALSIFIABLE CLAIM
+============================================================
+
+At 90% target sparsity, Taylor-based pruning (|w * g|) retains
+96.30% test accuracy (std=0.0047)
+versus 95.28% (std=0.0045) for
+magnitude pruning, averaged across 3 seeds.
+
+Taylor pruning outperforms magnitude pruning by 1.02% absolute accuracy.
+
+This claim is reproducible by running:
+  python -m train.sweep --seeds 3
+with the random seeds documented in results/pareto_raw.csv.
